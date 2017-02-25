@@ -2,29 +2,26 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 
-	"github.com/russross/blackfriday"
+	"github.com/ledongthuc/note-down/core"
 )
 
 func main() {
 	input := "# Header\ncontent\n#HEader\n*a*"
-
 	inputInBytes := []byte(input)
-	extensions := 0
-	extensions |= blackfriday.EXTENSION_NO_INTRA_EMPHASIS
-	extensions |= blackfriday.EXTENSION_TABLES
-	extensions |= blackfriday.EXTENSION_FENCED_CODE
-	extensions |= blackfriday.EXTENSION_AUTOLINK
-	extensions |= blackfriday.EXTENSION_STRIKETHROUGH
-	extensions |= blackfriday.EXTENSION_SPACE_HEADERS
-	htmlFlags := 0
-	htmlFlags |= blackfriday.HTML_USE_XHTML
-	htmlFlags |= blackfriday.HTML_USE_SMARTYPANTS
-	htmlFlags |= blackfriday.HTML_SMARTYPANTS_FRACTIONS
-	htmlFlags |= blackfriday.HTML_SMARTYPANTS_LATEX_DASHES
+	output := core.ParseRequest(inputInBytes)
+	fmt.Println(string(output))
 
-	render := blackfriday.HtmlRenderer(htmlFlags, "", "")
-	output := blackfriday.Markdown(inputInBytes, render, extensions)
+	fmt.Println("********\n")
+
+	var err error
+	output, err = ioutil.ReadFile("README.md")
+	if err != nil {
+		log.Fatal(err)
+	}
+	output = core.ParseRequest(output)
 
 	fmt.Println(string(output))
 }
